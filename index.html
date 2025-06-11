@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>3D Solar System Simulation (No CSS)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
+  </head>
+  <body>
+    <!-- Container for planet speed controls -->
+    <div id="controls"></div>
+    <script>
+      // === Scene Setup ===
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // === Lighting ===
+      const pointLight = new THREE.PointLight(0xffffff, 2, 1000);
+      pointLight.position.set(0, 0, 0);
+      scene.add(pointLight);
+
+      // === Sun ===
+      const sunGeometry = new THREE.SphereGeometry(4, 32, 32);
+      const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
+      const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+      scene.add(sun);
+
+      // === Planets Data ===
+      const planets = [
+        { name: 'Mercury', size: 0.5, distance: 6, speed: 0.04, color: 0xaaaaaa },
+        { name: 'Venus', size: 0.7, distance: 8, speed: 0.03, color: 0xffcc99 },
+        { name: 'Earth', size: 0.8, distance: 10, speed: 0.02, color: 0x2233ff },
+        { name: 'Mars', size: 0.6, distance: 12, speed: 0.018, color: 0xff3300 },
+        { name: 'Jupiter', size: 1.5, distance: 15, speed: 0.012, color: 0xff9966 },
+        { name: 'Saturn', size: 1.2, distance: 18, speed: 0.01, color: 0xffffcc },
+        { name: 'Uranus', size: 1.0, distance: 21, speed: 0.008, color: 0x66ffff },
+        { name: 'Neptune', size: 1.0, distance: 24, speed: 0.007, color: 0x3333ff }
+      ];
+
+      const planetMeshes = [];
+      const speedControl = {};
+      const orbitAngles = new Array(planets.length).fill(0);
+
+      // === Create Planets ===
+      planets.forEach((planet, index) => {
+        const geometry = new THREE.SphereGeometry(planet.size, 16, 16);
+        const material = new THREE.MeshStandardMaterial({ color: planet.color });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+        planetMeshes.push(mesh);
+
+        // Create input control for speed
+        const input = document.createElement('input');
+        input.type = 'range';
+        input.min = 0.001;
+        input.max = 0.1;
+        input.step = 0.001;
+        input.value = planet.speed;
+        input.oninput = () => {
+          planet.speed = parseFloat(input.value);
+        };
+        const label = document.createElement('label');
+        label.innerText = planet.name + ' speed';
+        document.getElementById('controls').appendChild(label);
+        document.getElementById('controls').appendChild(input);
+        document.getElementById('controls').appendChild(document.createElement('br'));
+      });
+
+      camera.position.z = 35;
+
+      // === Animate ===
+      function animate() {
+        requestAnimationFrame(animate);
+
+        planets.forEach((planet, index) => {
+          orbitAngles[index] += planet.speed;
+          const mesh = planetMeshes[index];
+          mesh.position.x = planet.distance * Math.cos(orbitAngles[index]);
+          mesh.position.z = planet.distance * Math.sin(orbitAngles[index]);
+          mesh.rotation.y += 0.01;
+        });
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      // Resize canvas on window resize
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    </script>
+  </body>
+</html>
