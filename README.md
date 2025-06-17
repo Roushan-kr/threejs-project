@@ -60,21 +60,10 @@ npx serve .
 
 ## 📚 Credits & References
 
-* **Bloom effect demonstration** from Three.js examples ([github.com][8])
-* **Skybox setup** using `CubeTextureLoader()` techniques ([threejs.org][4])
+* **Bloom effect demonstration** from Three.js examples 
+* **Skybox setup** using `CubeTextureLoader()` techniques([threejs.org][4])
 
----
 
-## 🎯 Future Enhancements
-
-* **Saturn’s rings** via `RingGeometry`
-* **Earth’s moon** orbiting dynamics
-* **Orbit path visualization** using lines or trails
-* **Day/night lighting effect** for Earth
-
-Let me know if you'd like to walk through any of these features!
-
----
 
 ## 🧾 License
 ```
